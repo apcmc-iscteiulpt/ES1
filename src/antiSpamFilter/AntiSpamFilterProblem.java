@@ -31,6 +31,8 @@ public class AntiSpamFilterProblem extends AbstractDoubleProblem {
 	  }
 
 	  public void evaluate(DoubleSolution solution){
+		//teste  
+		  
 	    double aux, xi, xj;
 	    double[] fx = new double[getNumberOfObjectives()];
 	    double[] x = new double[getNumberOfVariables()];
