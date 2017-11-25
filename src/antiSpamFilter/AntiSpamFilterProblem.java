@@ -10,6 +10,7 @@ public class AntiSpamFilterProblem extends AbstractDoubleProblem {
 
 	  public AntiSpamFilterProblem() {
 	    // 10 variables (anti-spam filter rules) by default 
+		// fazer o length do ficheiro Rules
 	    this(10);
 	  }
 
@@ -31,8 +32,7 @@ public class AntiSpamFilterProblem extends AbstractDoubleProblem {
 	  }
 
 	  public void evaluate(DoubleSolution solution){
-		// testecommit
-		  //teste
+		// Neste Método adicionar método que avalia a qualidade das pesos definidos
 		  
 	    double aux, xi, xj;
 	    double[] fx = new double[getNumberOfObjectives()];
