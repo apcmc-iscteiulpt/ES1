@@ -32,7 +32,7 @@ public class AntiSpamFilterProblem extends AbstractDoubleProblem {
 	  }
 
 	  public void evaluate(DoubleSolution solution){
-		// Neste Método adicionar método que avalia a qualidade das pesos definidos
+		// Neste Metodo adicionar metodo que avalia a qualidade das pesos definidos
 		  
 	    double aux, xi, xj;
 	    double[] fx = new double[getNumberOfObjectives()];
