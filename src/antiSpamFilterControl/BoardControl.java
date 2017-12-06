@@ -79,7 +79,7 @@ public class BoardControl {
 		
 		frame.add(FilesPanel);
 		
-		//Valid Emails - ham.log
+		//Valid Emails - ham.log   
 		ValidMailsFile_Input = new JTextArea("/Users/Tiago/Downloads/ham.log");
 		ValidMailsFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		ValidMailsFile_Input.setSize(inputsDimension);
