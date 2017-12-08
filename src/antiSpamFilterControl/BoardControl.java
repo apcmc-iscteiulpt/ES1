@@ -35,33 +35,30 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.io.FileUtils;
 
+import antiSpamFilter.AntiSpamFilterProblem;
+
 public class BoardControl {
 
 	JFrame frame =  new JFrame("antiSpamFilter");
+	private Dimension PanelsDimension = new Dimension(300, 400);
+	private Dimension inputsDimension = new Dimension(150, 15);
+	
 	JTextField SpamToolsFile_Input;
 	JTextField ValidMailsFile_Input;
 	JTextField SpamMailsFile_Input;
 	JButton GetFiles = new JButton("Get Files");
-	Dimension PanelsDimension = new Dimension(300, 400);
-	File rules = new File("rules.cf");
-	File ham = new File("ham.log");
-	File spam = new File("spam.log");
-	HashMap<String, Double> hmRules = new HashMap<String, Double>();
+	
+	JComboBox<String> CBRules = new JComboBox<String>();
 	DefaultComboBoxModel<String> rulesCB;
 	JTextField ruleValue;
-	private Dimension inputsDimension = new Dimension(150, 15);
-	
 	JButton manualTest = new JButton("Test Values");
 	JButton manualSaveRuleValues = new JButton("Save configurations");
-	JComboBox<String> CBRules = new JComboBox<String>();
-	JList<String> SpamToolsListAuto;
 	JTextArea manualResults =  new JTextArea();
+	
+	JList<String> SpamToolsListAuto;
+	
 	JTextArea autoResults =  new JTextArea();
 	String currRule = "";
-	int falsePositiveManual = 0;
-	int falseNegativeManual = 0;
-	int falsePositiveAuto = 0;
-	int falseNegativeAuto = 0;
 	
 	public BoardControl() {
 		
@@ -88,8 +85,9 @@ public class BoardControl {
 		FilesPanel.setSize(PanelsDimension);
 		FilesPanel.setBackground(Color.CYAN);
 		FilesPanel.setLayout(new GridLayout(4, 2, 5, 3));
+		
 		//Spam Tools File - rules.cf
-		SpamToolsFile_Input = new JTextField("/Users/Tiago/Downloads/rules.cf");
+		SpamToolsFile_Input = new JTextField("rules.cf"); // 		/Users/Tiago/Downloads/rules.cf
 		SpamToolsFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		SpamToolsFile_Input.setSize(inputsDimension);
 		FilesPanel.add(SpamToolsFile_Input);
@@ -98,10 +96,13 @@ public class BoardControl {
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					try {
-						copyFiles(BoardControl.getFile(SpamToolsFile_Input.getText()), rules);
-						rulesToHM(rules);
-						copyFiles(BoardControl.getFile(ValidMailsFile_Input.getText()), ham);
-						copyFiles(BoardControl.getFile(SpamMailsFile_Input.getText()), spam);
+						copyFiles(BoardControl.getFile(SpamToolsFile_Input.getText()), AntiSpamFilterControl.rules);
+						AntiSpamFilterControl.rulesToHM();
+						for (String rule : AntiSpamFilterControl.hmRules.keySet()) {
+							rulesCB.addElement(rule);
+						}
+						copyFiles(BoardControl.getFile(ValidMailsFile_Input.getText()), AntiSpamFilterControl.ham);
+						copyFiles(BoardControl.getFile(SpamMailsFile_Input.getText()), AntiSpamFilterControl.spam);
 						startFilesConfig(false);
 						startSpamFilterTest(true);
 					} catch (IOException e1) {
@@ -114,13 +115,13 @@ public class BoardControl {
 		frame.add(FilesPanel);
 		
 		//Valid Emails - ham.log   
-		ValidMailsFile_Input = new JTextField("/Users/Tiago/Downloads/ham.log");
+		ValidMailsFile_Input = new JTextField("ham.log");
 		ValidMailsFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		ValidMailsFile_Input.setSize(inputsDimension);
 		FilesPanel.add(ValidMailsFile_Input);
 		
 		//Spam Emails - spam.log
-		SpamMailsFile_Input = new JTextField("/Users/Tiago/Downloads/spam.log");
+		SpamMailsFile_Input = new JTextField("spam.log");
 		SpamMailsFile_Input.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 		SpamMailsFile_Input.setSize(inputsDimension);
 		FilesPanel.add(SpamMailsFile_Input);
@@ -134,11 +135,9 @@ public class BoardControl {
 		ManualPanel.setSize(PanelsDimension);
 		ManualPanel.setBackground(Color.darkGray);
 		ManualPanel.setLayout(new GridLayout(4, 2, 5, 3));
-		
+
 		rulesCB = new DefaultComboBoxModel<String>();
-		
 		CBRules.setModel(rulesCB);
-		
 		ruleValue = new JTextField();
 		
 		ActionListener selectRuleCB = new ActionListener() {
@@ -153,6 +152,9 @@ public class BoardControl {
 		manualTest.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
+					AntiSpamFilterProblem solver = new AntiSpamFilterProblem(AntiSpamFilterControl.hmRules.size());
+					AntiSpamFilterControl.setManualResults(solver.createSolution());
+					solver.evaluate(AntiSpamFilterControl.manualResults);
 					setResultString("manual");
 				}
 			}
@@ -162,7 +164,8 @@ public class BoardControl {
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					try {
-						saveRulesFile();
+						setValueToRule();
+						AntiSpamFilterControl.saveRulesFile();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -171,7 +174,6 @@ public class BoardControl {
 		);
 		
 		manualResults.setEnabled(false);
-		
 		ManualPanel.add(CBRules);
 		ManualPanel.add(ruleValue);
 		ManualPanel.add(manualTest);
@@ -188,60 +190,28 @@ public class BoardControl {
 	}
 	
 	private static void copyFiles(File source, File dest) throws IOException {
-		FileUtils.copyFile(source, dest);
+		if(!source.equals(dest))
+			FileUtils.copyFile(source, dest);
 	}
 	
-	private void rulesToHM(File file) throws FileNotFoundException{
-		HashMap<String, Double> hm = new HashMap<String, Double>();
-		if(file.exists()){
-			Scanner scanner = new Scanner(file);
-			String line;
-			while(scanner.hasNext()){
-				line = scanner.nextLine();
-				String[] parts = line.split(" ");
-				double value = 0.0;
-				if(parts.length > 1)
-					value = Double.parseDouble(parts[1]);
-				hm.put(parts[0], value);
-			}
-			scanner.close();
-		}
-		hmRules = hm;
-		
-		for (String rule : hmRules.keySet()) {
-			rulesCB.addElement(rule);
-		}
-	}
 	
 	private void setResultString(String testType) {
 		switch(testType) {
 			case "manual": 
-				manualResults.setText("Falsos positivos:" + falsePositiveManual + " Falsos Negativos:" + falseNegativeManual);
+//				manualResults.setText("Falsos positivos:" + AntiSpamFilterControl.manualResults.getVariableValueString(1) + " Falsos Negativos:" + AntiSpamFilterControl.manualResults.getVariableValueString(0));
+				manualResults.setText("FP :" + AntiSpamFilterControl.manualResults.getObjective(1) + 
+									" FN:" +  AntiSpamFilterControl.manualResults.getObjective(0));
 			case "auto": 
-				autoResults.setText("Falsos positivos:" + falsePositiveAuto + " Falsos Negativos:" + falseNegativeAuto);
-
+				/*autoResults.setText("FP:" + AntiSpamFilterControl.autoResults.getObjective(1) + 
+								  " FN:" + AntiSpamFilterControl.autoResults.getObjective(0));*/
 		}
 	}
 	
 	private void setValueToRule() {
 		if(!currRule.isEmpty())
-			hmRules.put(currRule, Double.parseDouble(ruleValue.getText()));
-		
+			AntiSpamFilterControl.hmRules.put(currRule, Double.parseDouble(ruleValue.getText()));
 		currRule = CBRules.getSelectedItem().toString();
-		System.out.println(currRule);
-		ruleValue.setText(Double.toString(hmRules.get(currRule)));
-	}
-	
-	private void saveRulesFile() throws IOException {
-		setValueToRule();
-		FileWriter rulesFile = new FileWriter(rules, false);
-		PrintWriter saveRules = new PrintWriter(rulesFile);
-		
-		for (String line : hmRules.keySet()) {
-			saveRules.write(line + " " + hmRules.get(line) + "\n");
-		}
-		rulesFile.close();
-		saveRules.close();
+		ruleValue.setText(Double.toString(AntiSpamFilterControl.hmRules.get(currRule)));
 	}
 	
 	private void start() {
