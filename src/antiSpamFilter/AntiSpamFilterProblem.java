@@ -59,8 +59,11 @@ public class AntiSpamFilterProblem extends AbstractDoubleProblem {
 					counter = 0;
 					line = scanner.nextLine();
 					String[] parts = line.split("\\t");
+					String auxString = "";
 					for(int i = 1; i < parts.length; i++) {
-						counter = counter + ((double) hm.get(parts[i]));
+						auxString = parts[i];
+						int j = AntiSpamFilterControl.rulesList.indexOf(auxString);	
+						counter = counter + Double.parseDouble(solution.getVariableValueString(j));
 					}
 					if(counter > 5)
 						fx[0] += 1.0;
@@ -85,9 +88,11 @@ public class AntiSpamFilterProblem extends AbstractDoubleProblem {
 					counter = 0;
 					line = scanner.nextLine();
 					String[] parts = line.split("\\t");
+					String auxString = "";
 					for(int i = 1; i < parts.length; i++) {
-						if(hm.containsKey(parts[i]))
-							counter = counter + ((double) hm.get(parts[i]));
+						auxString = parts[i];
+						int j = AntiSpamFilterControl.rulesList.indexOf(auxString);	
+						counter = counter + Double.parseDouble(solution.getVariableValueString(j));
 					}
 					if(counter <= 5)
 						fx[1] += 1.0;

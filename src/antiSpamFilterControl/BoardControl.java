@@ -5,34 +5,17 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
-
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import org.apache.commons.io.FileUtils;
 
 import antiSpamFilter.AntiSpamFilterProblem;
@@ -152,9 +135,7 @@ public class BoardControl {
 		manualTest.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
-					AntiSpamFilterProblem solver = new AntiSpamFilterProblem(AntiSpamFilterControl.hmRules.size());
-					AntiSpamFilterControl.setManualResults(solver.createSolution());
-					solver.evaluate(AntiSpamFilterControl.manualResults);
+					AntiSpamFilterControl.manualEvaluate();
 					setResultString("manual");
 				}
 			}
@@ -199,8 +180,8 @@ public class BoardControl {
 		switch(testType) {
 			case "manual": 
 //				manualResults.setText("Falsos positivos:" + AntiSpamFilterControl.manualResults.getVariableValueString(1) + " Falsos Negativos:" + AntiSpamFilterControl.manualResults.getVariableValueString(0));
-				manualResults.setText("FP :" + AntiSpamFilterControl.manualResults.getObjective(1) + 
-									" FN:" +  AntiSpamFilterControl.manualResults.getObjective(0));
+				manualResults.setText("FP :" + AntiSpamFilterControl.falsePositiveManual + 
+									" FN:" +  AntiSpamFilterControl.falseNegativeManual);
 			case "auto": 
 				/*autoResults.setText("FP:" + AntiSpamFilterControl.autoResults.getObjective(1) + 
 								  " FN:" + AntiSpamFilterControl.autoResults.getObjective(0));*/
