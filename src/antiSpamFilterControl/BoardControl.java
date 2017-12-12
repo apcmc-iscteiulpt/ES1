@@ -38,9 +38,15 @@ public class BoardControl {
 	JButton manualSaveRuleValues = new JButton("Save configurations");
 	JTextArea manualResults =  new JTextArea();
 	
+	JComboBox<String> autoCBRules = new JComboBox<String>();
+	DefaultComboBoxModel<String> autoRulesCB;
+	JTextField autoRuleValue;
+	JButton autoTest = new JButton("Test Values");
+	JButton autoSaveRuleValues = new JButton("Save configurations");
+	JTextArea autoResults =  new JTextArea();
+	
 	JList<String> SpamToolsListAuto;
 	
-	JTextArea autoResults =  new JTextArea();
 	String currRule = "";
 	
 	public BoardControl() {
@@ -57,10 +63,12 @@ public class BoardControl {
 		manualTestPanel();
 		
 		//Auto Configurations panel
+		autoTestPanel();
+		/*
 		JPanel AutoPanel = new JPanel();
 		AutoPanel.setSize(PanelsDimension);
 		AutoPanel.setBackground(Color.green);
-		frame.add(AutoPanel);
+		frame.add(AutoPanel);*/
 	}
 	
 	private void filesPanel() {
@@ -83,6 +91,7 @@ public class BoardControl {
 						AntiSpamFilterControl.rulesToHM();
 						for (String rule : AntiSpamFilterControl.hmRules.keySet()) {
 							rulesCB.addElement(rule);
+							autoRulesCB.addElement(rule);
 						}
 						copyFiles(BoardControl.getFile(ValidMailsFile_Input.getText()), AntiSpamFilterControl.ham);
 						copyFiles(BoardControl.getFile(SpamMailsFile_Input.getText()), AntiSpamFilterControl.spam);
@@ -162,6 +171,55 @@ public class BoardControl {
 		ManualPanel.add(manualResults);
 		frame.add(ManualPanel);
 	}
+
+	private void autoTestPanel() {
+		JPanel autoPanel = new JPanel();
+		autoPanel.setSize(PanelsDimension);
+		autoPanel.setBackground(Color.darkGray);
+		autoPanel.setLayout(new GridLayout(4, 2, 5, 3));
+
+		autoRulesCB = new DefaultComboBoxModel<String>();
+		autoCBRules.setModel(autoRulesCB);
+		autoRuleValue = new JTextField();
+		
+		ActionListener selectRuleCB = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setValueToRule();
+			}
+		};
+		
+		autoCBRules.addActionListener(selectRuleCB);
+		
+		autoTest.addActionListener(
+			new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					//Call evaluate Here!!!!
+				}
+			}
+		);
+		
+		autoSaveRuleValues.addActionListener(
+			new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					try {
+						setValueToRule();
+						AntiSpamFilterControl.saveRulesFile();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		);
+		
+		autoResults.setEnabled(false);
+		autoPanel.add(autoCBRules);
+		autoPanel.add(autoRuleValue);
+		autoPanel.add(autoTest);
+		autoPanel.add(autoSaveRuleValues);
+		autoPanel.add(autoResults);
+		frame.add(autoPanel);
+	}
 	
 	private static File getFile(String pathFile) {
 		if(!pathFile.isEmpty()){
@@ -213,6 +271,10 @@ public class BoardControl {
 		ruleValue.setEnabled(bool);
 		manualTest.setEnabled(bool);
 		manualSaveRuleValues.setEnabled(bool);
+		autoCBRules.setEnabled(bool);
+		autoRuleValue.setEnabled(bool);
+		autoTest.setEnabled(bool);
+		autoSaveRuleValues.setEnabled(bool);
 	}
 	
 	public static void main(String[] args) {
