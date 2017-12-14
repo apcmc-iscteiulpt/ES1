@@ -22,8 +22,8 @@ public final class AntiSpamFilterControl {
 	public static ArrayList<String> ruleList = new ArrayList<String>();
 	static ArrayList<Double> wList = new ArrayList<Double>(); //Weigths List
 	static ArrayList<Double> autoWList = new ArrayList<Double>(); //Weigths List
-	static int falsePositiveManual;
-	static int falseNegativeManual;
+	static int falsePositiveManual; //emails HAM sinalizados pelo filtro
+	static int falseNegativeManual; //emails SPAM não sinalizados pelo filtro
 	public static int falsePositiveAuto;
 	public static int falseNegativeAuto;
 	public static DoubleSolution manualResults;
@@ -150,9 +150,9 @@ public final class AntiSpamFilterControl {
 				while(scanner.hasNext()){
 					if(getWeigthOfRulesArray(scanner.nextLine(), weigthList) > 5) {
 						if(isManual)
-							falseNegativeManual += 1;
+							falsePositiveManual += 1;
 						else
-							falseNegativeAuto += 1;
+							falsePositiveAuto += 1;
 					}
 				}
 				scanner.close();
@@ -168,9 +168,9 @@ public final class AntiSpamFilterControl {
 				while(scanner.hasNext()){
 					if(getWeigthOfRulesArray(scanner.nextLine(), weigthList) <= 5) {
 						if(isManual)
-							falsePositiveManual += 1;
+							falseNegativeManual += 1;
 						else
-							falsePositiveAuto += 1;
+							falseNegativeAuto += 1;
 					}
 				}
 				scanner.close();
