@@ -18,14 +18,17 @@ public final class AntiSpamFilterControl {
 	static File rules = new File("rules.cf");
 	static File ham = new File("ham.log");
 	static File spam = new File("spam.log");
-	static HashMap<String, Double> hmRules = new HashMap<String, Double>();
+	static HashMap<String, Integer> hmRulesOrder = new HashMap<String, Integer>();
+	public static ArrayList<String> ruleList = new ArrayList<String>();
+	static ArrayList<Double> wList = new ArrayList<Double>(); //Weigths List
+	static ArrayList<Double> autoWList = new ArrayList<Double>(); //Weigths List
 	static int falsePositiveManual;
 	static int falseNegativeManual;
-	int falsePositiveAuto;
-	static int falseNegativeAuto;
+	public static int falsePositiveAuto;
+	public static int falseNegativeAuto;
 	public static DoubleSolution manualResults;
 	public static DoubleSolution autoResults;
-	public static ArrayList<String> rulesList = new ArrayList<String>();
+
 	
 	public AntiSpamFilterControl() {
 		falsePositiveManual = 0;
@@ -34,28 +37,31 @@ public final class AntiSpamFilterControl {
 		falseNegativeAuto = 0;
 	}
 		
-		
-	static void rulesToHM() throws FileNotFoundException{
-		HashMap<String, Double> hm = new HashMap<String, Double>();
+	@SuppressWarnings("unchecked")
+	static void treatRulesFile() throws FileNotFoundException{
+		HashMap<String, Integer> hm = new HashMap<String, Integer>();
 		if(rules.exists()){
 			Scanner scanner = new Scanner(rules);
 			String line;
+			int counter = 0;
+			double value = 0.0;
 			while(scanner.hasNext()){
 				line = scanner.nextLine();
 				String[] parts = line.split(" ");
-				double value = 0.0;
+				hm.put(parts[0], counter);
 				if(parts.length > 1)
 					value = Double.parseDouble(parts[1]);
-				hm.put(parts[0], value);
-				rulesList.add(parts[0]);
+				else
+					value = 0.0;
+				
+				wList.add(value);
+				ruleList.add(parts[0]);
+				counter += 1;
 			}
 			scanner.close();
 		}
-		hmRules = hm;
-	}
-	
-	public static HashMap<String, Double> getHMRules() {
-		return hmRules;
+		hmRulesOrder = hm;
+		autoWList = (ArrayList<Double>) wList.clone();
 	}
 	
 	public static File getHamFile() {
@@ -70,6 +76,22 @@ public final class AntiSpamFilterControl {
 		manualResults = solution;
 	}
 	
+	public static double getWeigthByRule(String rule, boolean isManual) {
+		if(isManual)
+			return getWeigthByRule(rule, wList);
+		else
+			return getWeigthByRule(rule, autoWList);
+	}
+	
+	public static double getWeigthByRule(String rule, ArrayList<Double> list) {
+		int i = hmRulesOrder.get(rule);
+		return list.get(i);
+	}
+	
+	public static void setWeigthByRule(String rule, double weight) {
+		wList.set(hmRulesOrder.get(rule), weight);
+	}
+	
 	public static int getIndexRule(String Rule) {
 		
 		
@@ -77,36 +99,61 @@ public final class AntiSpamFilterControl {
 		
 	}
 	
-	public static void saveRulesFile() throws IOException {
+	public static void saveRulesFile(boolean isManual) throws IOException {
+		if(isManual)
+			saveRulesFile(wList);
+		else	
+			saveRulesFile(autoWList);
+	}
+	
+	public static void saveRulesFile(ArrayList<Double> weigthList) throws IOException {
 		FileWriter rulesFile = new FileWriter(rules, false);
 		PrintWriter saveRules = new PrintWriter(rulesFile);
-		
-		for (String line : hmRules.keySet()) {
-			saveRules.write(line + " " + hmRules.get(line) + "\n");
+		for (int i = 0; i < ruleList.size(); i++) {
+			saveRules.write(ruleList.get(i) + " " + weigthList.get(i) + "\n");
 		}
 		rulesFile.close();
 		saveRules.close();
 	}
 	
-	public static void manualEvaluate() {
-		falsePositiveManual = 0;
-		falseNegativeManual = 0;
-		double counter = 0.0;
-	    if(ham.exists()){
+	public static void Evaluater(boolean isManual) {
+		if(isManual)
+			Evaluater(wList, isManual);
+		else
+			Evaluater(autoWList, isManual);
+	}
+	
+	private static double getWeigthOfRulesArray(String line, ArrayList<Double> weigthList) {
+		Double counter = 0.0;
+		String[] parts = line.split("\\t");
+		for(int i = 1; i < parts.length; i++) {
+			if(hmRulesOrder.containsKey(parts[i]))
+				counter = counter + getWeigthByRule(parts[i], weigthList);
+		}
+		return counter;
+	}
+	
+	public static void Evaluater(ArrayList<Double> weigthList, boolean isManual) {
+	    if(isManual) {
+		    	falseNegativeManual = 0;
+		    	falsePositiveManual = 0;
+	    }
+	    else {
+	    		falseNegativeAuto = 0;
+	    		falsePositiveAuto = 0;
+	    }
+		
+		if(ham.exists()){
 			Scanner scanner;
 			try {
 				scanner = new Scanner(ham);
-				String line;
 				while(scanner.hasNext()){
-					counter = 0;
-					line = scanner.nextLine();
-					String[] parts = line.split("\\t");
-					for(int i = 1; i < parts.length; i++) {
-						if(hmRules.containsKey(parts[i]))
-							counter = counter + ((double) hmRules.get(parts[i]));
+					if(getWeigthOfRulesArray(scanner.nextLine(), weigthList) > 5) {
+						if(isManual)
+							falseNegativeManual += 1;
+						else
+							falseNegativeAuto += 1;
 					}
-					if(counter > 5)
-						falseNegativeManual += 1;
 				}
 				scanner.close();
 			} catch (FileNotFoundException e) {
@@ -118,17 +165,13 @@ public final class AntiSpamFilterControl {
 			Scanner scanner;
 			try {
 				scanner = new Scanner(spam);
-				String line;
 				while(scanner.hasNext()){
-					counter = 0;
-					line = scanner.nextLine();
-					String[] parts = line.split("\\t");
-					for(int i = 1; i < parts.length; i++) {
-						if(hmRules.containsKey(parts[i]))
-							counter = counter + ((double) hmRules.get(parts[i]));
+					if(getWeigthOfRulesArray(scanner.nextLine(), weigthList) <= 5) {
+						if(isManual)
+							falsePositiveManual += 1;
+						else
+							falsePositiveAuto += 1;
 					}
-					if(counter <= 5)
-						falsePositiveManual += 1;
 				}
 				scanner.close();
 			} catch (FileNotFoundException e) {

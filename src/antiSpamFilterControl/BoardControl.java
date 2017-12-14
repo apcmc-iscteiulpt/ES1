@@ -18,12 +18,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import org.apache.commons.io.FileUtils;
 
-import antiSpamFilter.AntiSpamFilterProblem;
+import antiSpamFilter.AntiSpamFilterAutomaticConfiguration;
 
 public class BoardControl {
 
 	JFrame frame =  new JFrame("antiSpamFilter");
-	private Dimension PanelsDimension = new Dimension(300, 400);
+	private Dimension PanelsDimension = new Dimension(500, 400);
 	private Dimension inputsDimension = new Dimension(150, 15);
 	
 	JTextField SpamToolsFile_Input;
@@ -52,7 +52,7 @@ public class BoardControl {
 	public BoardControl() {
 		
 		// Frame definition
-		frame.setSize(300, 2000);
+		frame.setSize(500, 2000);
 		frame.setLayout(new GridLayout(3, 1, 4, 2));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -88,11 +88,7 @@ public class BoardControl {
 				public void actionPerformed(ActionEvent e){
 					try {
 						copyFiles(BoardControl.getFile(SpamToolsFile_Input.getText()), AntiSpamFilterControl.rules);
-						AntiSpamFilterControl.rulesToHM();
-						for (String rule : AntiSpamFilterControl.hmRules.keySet()) {
-							rulesCB.addElement(rule);
-							autoRulesCB.addElement(rule);
-						}
+						AntiSpamFilterControl.treatRulesFile();
 						copyFiles(BoardControl.getFile(ValidMailsFile_Input.getText()), AntiSpamFilterControl.ham);
 						copyFiles(BoardControl.getFile(SpamMailsFile_Input.getText()), AntiSpamFilterControl.spam);
 						startFilesConfig(false);
@@ -144,7 +140,8 @@ public class BoardControl {
 		manualTest.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
-					AntiSpamFilterControl.manualEvaluate();
+					setValueToRule();
+					AntiSpamFilterControl.Evaluater(true);
 					setResultString("manual");
 				}
 			}
@@ -155,7 +152,7 @@ public class BoardControl {
 				public void actionPerformed(ActionEvent e){
 					try {
 						setValueToRule();
-						AntiSpamFilterControl.saveRulesFile();
+						AntiSpamFilterControl.saveRulesFile(true);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -185,7 +182,7 @@ public class BoardControl {
 		ActionListener selectRuleCB = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setValueToRule();
+				autoRuleValue.setText(AntiSpamFilterControl.getWeigthByRule(autoRulesCB.getSelectedItem().toString(), false) + "");
 			}
 		};
 		
@@ -195,6 +192,13 @@ public class BoardControl {
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					//Call evaluate Here!!!!
+					AntiSpamFilterAutomaticConfiguration w  = new AntiSpamFilterAutomaticConfiguration();
+					try {
+						w.run(AntiSpamFilterControl.ruleList.size());
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					System.out.println("Configuração automática terminou!");
 				}
 			}
 		);
@@ -204,14 +208,14 @@ public class BoardControl {
 				public void actionPerformed(ActionEvent e){
 					try {
 						setValueToRule();
-						AntiSpamFilterControl.saveRulesFile();
+						AntiSpamFilterControl.saveRulesFile(false);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 				}
 			}
 		);
-		
+		autoRuleValue.setEditable(false);
 		autoResults.setEnabled(false);
 		autoPanel.add(autoCBRules);
 		autoPanel.add(autoRuleValue);
@@ -247,10 +251,11 @@ public class BoardControl {
 	}
 	
 	private void setValueToRule() {
-		if(!currRule.isEmpty())
-			AntiSpamFilterControl.hmRules.put(currRule, Double.parseDouble(ruleValue.getText()));
+		if(!currRule.isEmpty()) {
+			AntiSpamFilterControl.setWeigthByRule(currRule, Double.parseDouble(ruleValue.getText()));
+		}
 		currRule = CBRules.getSelectedItem().toString();
-		ruleValue.setText(Double.toString(AntiSpamFilterControl.hmRules.get(currRule)));
+		ruleValue.setText(AntiSpamFilterControl.getWeigthByRule(currRule, true) + "");
 	}
 	
 	private void start() {
@@ -267,6 +272,12 @@ public class BoardControl {
 	}
 	
 	private void startSpamFilterTest(Boolean bool) {
+		if(bool) {
+			for(String rule : AntiSpamFilterControl.ruleList) {
+				rulesCB.addElement(rule);
+				autoRulesCB.addElement(rule);
+			}
+		}
 		CBRules.setEnabled(bool);
 		ruleValue.setEnabled(bool);
 		manualTest.setEnabled(bool);
