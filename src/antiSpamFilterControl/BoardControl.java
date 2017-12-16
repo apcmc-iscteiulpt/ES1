@@ -1,7 +1,10 @@
 package antiSpamFilterControl;
 
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +15,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -21,22 +25,24 @@ import org.apache.commons.io.FileUtils;
 import antiSpamFilter.AntiSpamFilterAutomaticConfiguration;
 
 public class BoardControl {
-
+	int frameWidth = 500;
+	int frameWeigth = 800;
 	JFrame frame =  new JFrame("antiSpamFilter");
-	private Dimension PanelsDimension = new Dimension(500, 400);
+	private Dimension filesPanelDimension = new Dimension(frameWidth, frameWeigth/3);
+	private Dimension PanelsDimension = new Dimension(frameWidth, frameWeigth/3);
 	private Dimension inputsDimension = new Dimension(150, 15);
 	
 	JTextField SpamToolsFile_Input;
 	JTextField ValidMailsFile_Input;
 	JTextField SpamMailsFile_Input;
-	JButton GetFiles = new JButton("Get Files");
+	JButton getFilesButton = new JButton("Get Files");
 	
-	JComboBox<String> CBRules = new JComboBox<String>();
+	JComboBox<String> manualCBRules = new JComboBox<String>();
 	DefaultComboBoxModel<String> rulesCB;
-	JTextField ruleValue;
-	JButton manualTest = new JButton("Test Values");
-	JButton manualSaveRuleValues = new JButton("Save configurations");
-	JTextArea manualResults =  new JTextArea();
+	JTextField manualRuleValue;
+	JButton manualTestButton;
+	JButton manualSaveValuesButton;
+	JTextArea manualResults;
 	
 	JComboBox<String> autoCBRules = new JComboBox<String>();
 	DefaultComboBoxModel<String> autoRulesCB;
@@ -52,7 +58,7 @@ public class BoardControl {
 	public BoardControl() {
 		
 		// Frame definition
-		frame.setSize(500, 2000);
+		frame.setSize(frameWidth, frameWeigth);
 		frame.setLayout(new GridLayout(3, 1, 4, 2));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -64,90 +70,140 @@ public class BoardControl {
 		
 		//Auto Configurations panel
 		autoTestPanel();
-		/*
-		JPanel AutoPanel = new JPanel();
-		AutoPanel.setSize(PanelsDimension);
-		AutoPanel.setBackground(Color.green);
-		frame.add(AutoPanel);*/
 	}
 	
 	private void filesPanel() {
 		JPanel FilesPanel = new JPanel();
-		FilesPanel.setSize(PanelsDimension);
-		FilesPanel.setBackground(Color.CYAN);
-		FilesPanel.setLayout(new GridLayout(4, 2, 5, 3));
+		FilesPanel.setSize(filesPanelDimension);
+		FilesPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		FilesPanel.setLayout(new GridLayout(5, 1, 6, 2));
+		FilesPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		
+		//Label title
+		JLabel filesLabel = new JLabel("Files Import");
+		filesLabel.setHorizontalAlignment(0);
+		FilesPanel.add(filesLabel);
 		
 		//Spam Tools File - rules.cf
+		JPanel rulesPanel = new JPanel();
+		rulesPanel.setSize(frameWidth, 40);
+		rulesPanel.setLayout(new GridLayout(2, 1, 1, 2));
+		JLabel rulesFileTitle = new JLabel("Rules File");
+		rulesPanel.add(rulesFileTitle);
 		SpamToolsFile_Input = new JTextField("rules.cf"); // 		/Users/Tiago/Downloads/rules.cf
 		SpamToolsFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		SpamToolsFile_Input.setSize(inputsDimension);
-		FilesPanel.add(SpamToolsFile_Input);
-
-		GetFiles.addActionListener(
-			new ActionListener(){
-				public void actionPerformed(ActionEvent e){
-					try {
-						copyFiles(BoardControl.getFile(SpamToolsFile_Input.getText()), AntiSpamFilterControl.rules);
-						AntiSpamFilterControl.treatRulesFile();
-						copyFiles(BoardControl.getFile(ValidMailsFile_Input.getText()), AntiSpamFilterControl.ham);
-						copyFiles(BoardControl.getFile(SpamMailsFile_Input.getText()), AntiSpamFilterControl.spam);
-						startFilesConfig(false);
-						startSpamFilterTest(true);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		);
+		rulesPanel.add(SpamToolsFile_Input);
+		FilesPanel.add(rulesPanel);
 		
-		frame.add(FilesPanel);
-		
-		//Valid Emails - ham.log   
+		//Valid Emails - ham.log
+		JPanel hamPanel = new JPanel();
+		hamPanel.setSize(frameWidth, 40);
+		hamPanel.setLayout(new GridLayout(2, 1, 1, 2));
+		JLabel hamFileTitle = new JLabel("Ham File");
+		hamPanel.add(hamFileTitle);
 		ValidMailsFile_Input = new JTextField("ham.log");
 		ValidMailsFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		ValidMailsFile_Input.setSize(inputsDimension);
-		FilesPanel.add(ValidMailsFile_Input);
+		hamPanel.add(ValidMailsFile_Input);
+		FilesPanel.add(hamPanel);
 		
 		//Spam Emails - spam.log
+		JPanel spamPanel = new JPanel();
+		spamPanel.setSize(frameWidth, 40);
+		spamPanel.setLayout(new GridLayout(2, 1, 1, 2));
+		JLabel spamFileTitle = new JLabel("SPAM File");
+		spamPanel.add(spamFileTitle);
 		SpamMailsFile_Input = new JTextField("spam.log");
-		SpamMailsFile_Input.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+		SpamMailsFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		SpamMailsFile_Input.setSize(inputsDimension);
-		FilesPanel.add(SpamMailsFile_Input);
+		spamPanel.add(SpamMailsFile_Input);
+		FilesPanel.add(spamPanel);
 		
 		//Get Files Button
-		FilesPanel.add(GetFiles);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		buttonPanel.setSize(frameWidth/2, 40);
+		getFilesButton.setHorizontalAlignment(0);
+		buttonPanel.add(getFilesButton);
+		FilesPanel.add(buttonPanel);
+		
+		getFilesButton.addActionListener(
+				new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						try {
+							copyFiles(BoardControl.getFile(SpamToolsFile_Input.getText()), AntiSpamFilterControl.rules);
+							AntiSpamFilterControl.treatRulesFile();
+							copyFiles(BoardControl.getFile(ValidMailsFile_Input.getText()), AntiSpamFilterControl.ham);
+							copyFiles(BoardControl.getFile(SpamMailsFile_Input.getText()), AntiSpamFilterControl.spam);
+							startFilesConfig(false);
+							startSpamFilterTest(true);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			);
+		
+		frame.add(FilesPanel);
 	}
 	
 	private void manualTestPanel() {
-		JPanel ManualPanel = new JPanel();
-		ManualPanel.setSize(PanelsDimension);
-		ManualPanel.setBackground(Color.darkGray);
-		ManualPanel.setLayout(new GridLayout(4, 2, 5, 3));
-
+		JPanel manualPanel = new JPanel();
+		manualPanel.setSize(PanelsDimension);
+		manualPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		manualPanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		
+		//Title
+		c.weighty = 0.5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		JLabel manualConfigLabel = new JLabel("Manual Configuration");
+		manualConfigLabel.setHorizontalAlignment(0);
+		manualPanel.add(manualConfigLabel, c);
+		
+		//ComboBox
+		c.weightx = 0.7;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipady = 20;
+		c.gridwidth = 1;
 		rulesCB = new DefaultComboBoxModel<String>();
-		CBRules.setModel(rulesCB);
-		ruleValue = new JTextField();
-		
-		ActionListener selectRuleCB = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setValueToRule();
-			}
-		};
-		
-		CBRules.addActionListener(selectRuleCB);
-		
-		manualTest.addActionListener(
-			new ActionListener(){
-				public void actionPerformed(ActionEvent e){
+		manualCBRules.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXX");
+		manualCBRules.setModel(rulesCB);
+		manualCBRules.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
 					setValueToRule();
-					AntiSpamFilterControl.Evaluater(true);
-					setResultString("manual");
 				}
 			}
 		);
+		manualPanel.add(manualCBRules, c);
 		
-		manualSaveRuleValues.addActionListener(
+		//WeigthValue
+		c.weightx = 0.3;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.ipady = 0;
+		c.gridwidth = 1;
+		manualRuleValue = new JTextField();
+		manualPanel.add(manualRuleValue, c);
+		
+		//Save Configurations Button
+		c.weightx = 0.5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.ipady = 15;
+		c.gridwidth = 2;
+		manualSaveValuesButton = new JButton("Save Manual configurations");
+		manualSaveValuesButton.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					try {
@@ -159,35 +215,121 @@ public class BoardControl {
 				}
 			}
 		);
+		manualSaveValuesButton.setSize(frameWidth/2, 80);
+		manualPanel.add(manualSaveValuesButton, c);
 		
+		//Test Values Button
+		c.weightx = 0.5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 3;
+		c.ipady = 15;
+		c.gridwidth = 2;
+		manualTestButton = new JButton("Test Values");
+		manualTestButton.addActionListener(
+			new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					setValueToRule();
+					AntiSpamFilterControl.Evaluater(true);
+					setResultString("manual");
+				}
+			}
+		);
+		manualTestButton.setSize(frameWidth/2, 80);
+		manualPanel.add(manualTestButton, c);
+		
+		//Show Results
+		c.weightx = 0.5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 4;
+		c.ipady = 0;
+		manualResults =  new JTextArea();
 		manualResults.setEnabled(false);
-		ManualPanel.add(CBRules);
-		ManualPanel.add(ruleValue);
-		ManualPanel.add(manualTest);
-		ManualPanel.add(manualSaveRuleValues);
-		ManualPanel.add(manualResults);
-		frame.add(ManualPanel);
+		manualPanel.add(manualResults, c);
+		
+		frame.add(manualPanel);
 	}
 
 	private void autoTestPanel() {
 		JPanel autoPanel = new JPanel();
 		autoPanel.setSize(PanelsDimension);
-		autoPanel.setBackground(Color.darkGray);
-		autoPanel.setLayout(new GridLayout(4, 2, 5, 3));
+		autoPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		autoPanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 
+		//Title
+		c.weighty = 0.5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		JLabel autoConfigLabel = new JLabel("Automatic Config");
+		autoConfigLabel.setHorizontalAlignment(0);
+		autoPanel.add(autoConfigLabel, c);
+		
+		//ComboBox Auto
+		c.weightx = 0.7;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipady = 20;
+		c.gridwidth = 1;		
 		autoRulesCB = new DefaultComboBoxModel<String>();
+		autoCBRules.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXX");
 		autoCBRules.setModel(autoRulesCB);
-		autoRuleValue = new JTextField();
-		
-		ActionListener selectRuleCB = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				autoRuleValue.setText(AntiSpamFilterControl.getWeigthByRule(autoRulesCB.getSelectedItem().toString(), false) + "");
+		autoCBRules.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					autoRuleValue.setText(AntiSpamFilterControl.getWeigthByRule(autoRulesCB.getSelectedItem().toString(), false) + "");
+				}
 			}
-		};
+		);
+		autoPanel.add(autoCBRules, c);
 		
-		autoCBRules.addActionListener(selectRuleCB);
+		//WeigthValue
+		c.weightx = 0.3;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.ipady = 0;
+		c.gridwidth = 1;
+		autoRuleValue = new JTextField();
+		autoPanel.add(autoRuleValue, c);
 		
+		
+		//Save Configurations Button
+		c.weightx = 0.5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.ipady = 15;
+		c.gridwidth = 2;
+		autoSaveRuleValues = new JButton("Save Auto configurations");
+		autoSaveRuleValues.addActionListener(
+			new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					try {
+						setValueToRule();
+						AntiSpamFilterControl.saveRulesFile(false);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		);
+		autoSaveRuleValues.setSize(frameWidth/2, 80);
+		autoPanel.add(autoSaveRuleValues, c);
+		
+		//Test Values Button
+		c.weightx = 0.5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 3;
+		c.ipady = 15;
+		c.gridwidth = 2;
+		autoTest = new JButton("Run Auto Algorithm");
 		autoTest.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
@@ -204,26 +346,19 @@ public class BoardControl {
 				}
 			}
 		);
+		autoTest.setSize(frameWidth/2, 80);
+		autoPanel.add(autoTest, c);
 		
-		autoSaveRuleValues.addActionListener(
-			new ActionListener(){
-				public void actionPerformed(ActionEvent e){
-					try {
-						setValueToRule();
-						AntiSpamFilterControl.saveRulesFile(false);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		);
-		autoRuleValue.setEditable(false);
+		//Show Results
+		c.weightx = 0.5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 4;
+		c.ipady = 0;
+		autoResults =  new JTextArea();
 		autoResults.setEnabled(false);
-		autoPanel.add(autoCBRules);
-		autoPanel.add(autoRuleValue);
-		autoPanel.add(autoTest);
-		autoPanel.add(autoSaveRuleValues);
-		autoPanel.add(autoResults);
+		autoPanel.add(autoResults, c);
+		
 		frame.add(autoPanel);
 	}
 	
@@ -239,25 +374,25 @@ public class BoardControl {
 			FileUtils.copyFile(source, dest);
 	}
 	
-	
 	private void setResultString(String testType) {
 		switch(testType) {
 			case "manual": 
-//				manualResults.setText("Falsos positivos:" + AntiSpamFilterControl.manualResults.getVariableValueString(1) + " Falsos Negativos:" + AntiSpamFilterControl.manualResults.getVariableValueString(0));
 				manualResults.setText("FP :" + AntiSpamFilterControl.falsePositiveManual + 
 									" FN:" +  AntiSpamFilterControl.falseNegativeManual);
+				break;
 			case "auto": 
 				autoResults.setText("FP :" + AntiSpamFilterControl.falsePositiveAuto + 
 								   " FN:" +  AntiSpamFilterControl.falseNegativeAuto);
+				break;
 		}
 	}
 	
 	private void setValueToRule() {
 		if(!currRule.isEmpty()) {
-			AntiSpamFilterControl.setWeigthByRule(currRule, Double.parseDouble(ruleValue.getText()));
+			AntiSpamFilterControl.setWeigthByRule(currRule, Double.parseDouble(manualRuleValue.getText()));
 		}
-		currRule = CBRules.getSelectedItem().toString();
-		ruleValue.setText(AntiSpamFilterControl.getWeigthByRule(currRule, true) + "");
+		currRule = manualCBRules.getSelectedItem().toString();
+		manualRuleValue.setText(AntiSpamFilterControl.getWeigthByRule(currRule, true) + "");
 	}
 	
 	private void start() {
@@ -267,7 +402,7 @@ public class BoardControl {
 	}
 	
 	private void startFilesConfig(Boolean bool) {
-		GetFiles.setEnabled(bool);
+		getFilesButton.setEnabled(bool);
 		SpamToolsFile_Input.setEnabled(bool);
 		ValidMailsFile_Input.setEnabled(bool);
 		SpamMailsFile_Input.setEnabled(bool);
@@ -280,14 +415,17 @@ public class BoardControl {
 				autoRulesCB.addElement(rule);
 			}
 		}
-		CBRules.setEnabled(bool);
-		ruleValue.setEnabled(bool);
-		manualTest.setEnabled(bool);
-		manualSaveRuleValues.setEnabled(bool);
+		manualCBRules.setEnabled(bool);
+		manualRuleValue.setEnabled(bool);
+		manualTestButton.setEnabled(bool);
+		manualSaveValuesButton.setEnabled(bool);
+		manualResults.setEnabled(false);
+		
 		autoCBRules.setEnabled(bool);
 		autoRuleValue.setEnabled(bool);
 		autoTest.setEnabled(bool);
 		autoSaveRuleValues.setEnabled(bool);
+		autoResults.setEnabled(false);
 	}
 	
 	public static void main(String[] args) {

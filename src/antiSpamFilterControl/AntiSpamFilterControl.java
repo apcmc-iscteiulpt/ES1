@@ -166,7 +166,7 @@ public final class AntiSpamFilterControl {
 				String line = Files.readAllLines(Paths.get("experimentBaseDirectory/referenceFronts/AntiSpamFilterProblem.NSGAII.rs")).get(i);
 				String[] parts = line.split(" ");
 				for(int j = 0; j < parts.length; j++) {
-					wList.set(j, Double.parseDouble(parts[j]));
+					autoWList.set(j, Double.parseDouble(parts[j]));
 				}
 				falsePositiveAuto = FP;
 				falseNegativeAuto = FN;
