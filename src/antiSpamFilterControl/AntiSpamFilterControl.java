@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -133,6 +135,49 @@ public final class AntiSpamFilterControl {
 		return counter;
 	}
 	
+	public static void selectAutoConfiguration() {
+		File fileMetrics = new File("experimentBaseDirectory/referenceFronts/AntiSpamFilterProblem.NSGAII.rf");
+		int i = -1;
+		int FP = -1;
+		int FN = -1;
+		if(fileMetrics.exists()){
+			Scanner scanner;
+			try {
+				scanner = new Scanner(fileMetrics);
+				int j = 0;
+				int valueGet = -1;
+				while(scanner.hasNext()){
+					String[] parts = scanner.nextLine().split(" ");
+					valueGet = (int) Double.parseDouble(parts[0]);
+					if((valueGet < FP && FP != -1) || FP == -1) {
+						FP = valueGet;
+						FN = (int) Double.parseDouble(parts[1]);
+						i = j;
+					}
+					j++;
+				}
+				scanner.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		if(i != -1) {
+			try {
+				String line = Files.readAllLines(Paths.get("experimentBaseDirectory/referenceFronts/AntiSpamFilterProblem.NSGAII.rs")).get(i);
+				String[] parts = line.split(" ");
+				for(int j = 0; j < parts.length; j++) {
+					wList.set(j, Double.parseDouble(parts[j]));
+				}
+				falsePositiveAuto = FP;
+				falseNegativeAuto = FN;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static void Evaluater(ArrayList<Double> weigthList, boolean isManual) {
 	    if(isManual) {
 		    	falseNegativeManual = 0;
@@ -142,7 +187,6 @@ public final class AntiSpamFilterControl {
 	    		falseNegativeAuto = 0;
 	    		falsePositiveAuto = 0;
 	    }
-		
 		if(ham.exists()){
 			Scanner scanner;
 			try {
@@ -160,8 +204,7 @@ public final class AntiSpamFilterControl {
 				e.printStackTrace();
 			}
 	    }
-	    
-	    if(spam.exists()){
+		if(spam.exists()){
 			Scanner scanner;
 			try {
 				scanner = new Scanner(spam);
@@ -178,11 +221,7 @@ public final class AntiSpamFilterControl {
 				e.printStackTrace();
 			}
 	    }
-		
 	}
-	
-	
-	
 }
 
 

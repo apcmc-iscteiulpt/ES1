@@ -195,6 +195,8 @@ public class BoardControl {
 					AntiSpamFilterAutomaticConfiguration w  = new AntiSpamFilterAutomaticConfiguration();
 					try {
 						w.run(AntiSpamFilterControl.ruleList.size());
+						AntiSpamFilterControl.selectAutoConfiguration();
+						setResultString("auto");
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -245,8 +247,8 @@ public class BoardControl {
 				manualResults.setText("FP :" + AntiSpamFilterControl.falsePositiveManual + 
 									" FN:" +  AntiSpamFilterControl.falseNegativeManual);
 			case "auto": 
-				/*autoResults.setText("FP:" + AntiSpamFilterControl.autoResults.getObjective(1) + 
-								  " FN:" + AntiSpamFilterControl.autoResults.getObjective(0));*/
+				autoResults.setText("FP :" + AntiSpamFilterControl.falsePositiveAuto + 
+								   " FN:" +  AntiSpamFilterControl.falseNegativeAuto);
 		}
 	}
 	
