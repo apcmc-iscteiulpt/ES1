@@ -55,6 +55,9 @@ public class BoardControl {
 	
 	String currRule = "";
 	
+	/**
+	 * Constructor of BoardControl
+	 */
 	public BoardControl() {
 		
 		// Frame definition
@@ -72,6 +75,9 @@ public class BoardControl {
 		autoTestPanel();
 	}
 	
+	/**
+	 * Procedure that establishes the Files selection panel
+	 */
 	private void filesPanel() {
 		JPanel FilesPanel = new JPanel();
 		FilesPanel.setSize(filesPanelDimension);
@@ -148,6 +154,9 @@ public class BoardControl {
 		frame.add(FilesPanel);
 	}
 	
+	/**
+	 * Procedure that establishes the manual configuration test panel
+	 */
 	private void manualTestPanel() {
 		JPanel manualPanel = new JPanel();
 		manualPanel.setSize(PanelsDimension);
@@ -251,6 +260,9 @@ public class BoardControl {
 		frame.add(manualPanel);
 	}
 
+	/**
+	 * Procedure that establishes the manual configuration test panel
+	 */
 	private void autoTestPanel() {
 		JPanel autoPanel = new JPanel();
 		autoPanel.setSize(PanelsDimension);
@@ -362,6 +374,11 @@ public class BoardControl {
 		frame.add(autoPanel);
 	}
 	
+	/**
+	 * Action to get file by path
+	 * @param pathFile Path of file to get
+	 * @return File, Null
+	 */
 	private static File getFile(String pathFile) {
 		if(!pathFile.isEmpty()){
 			return new File(pathFile);
@@ -369,11 +386,22 @@ public class BoardControl {
 		return null;
 	}
 	
+	
+	/**
+	 * Procedure to copy files from a source to a destiny
+	 * @param source Path of source file
+	 * @param dest Path of destination file
+	 * @throws IOException
+	 */
 	private static void copyFiles(File source, File dest) throws IOException {
 		if(!source.equals(dest))
 			FileUtils.copyFile(source, dest);
 	}
 	
+	/**
+	 * Procedure that sets the metrics of configuration selected by testType parameter to corresponding text area
+	 * @param testType type of configuration results to be shown
+	 */
 	private void setResultString(String testType) {
 		switch(testType) {
 			case "manual": 
@@ -387,6 +415,10 @@ public class BoardControl {
 		}
 	}
 	
+	
+	/**
+	 * Procedure that sets the weight (defined on TextArea) to corresponding rule
+	 */
 	private void setValueToRule() {
 		if(!currRule.isEmpty()) {
 			AntiSpamFilterControl.setWeigthByRule(currRule, Double.parseDouble(manualRuleValue.getText()));
@@ -395,12 +427,18 @@ public class BoardControl {
 		manualRuleValue.setText(AntiSpamFilterControl.getWeigthByRule(currRule, true) + "");
 	}
 	
+	/**
+	 * procedure that sets the window visible, and launchs the program
+	 */
 	private void start() {
 		frame.setVisible(true);
 		startFilesConfig(true);
 		startSpamFilterTest(false);
 	}
 	
+	/**
+	 * Procedure that sets visible/launch the window where the files are get
+	 */
 	private void startFilesConfig(Boolean bool) {
 		getFilesButton.setEnabled(bool);
 		SpamToolsFile_Input.setEnabled(bool);
@@ -408,6 +446,10 @@ public class BoardControl {
 		SpamMailsFile_Input.setEnabled(bool);
 	}
 	
+	
+	/**
+	 * Procedure that sets visible/launch the window where the configurations (manual and auto) are operated
+	 */
 	private void startSpamFilterTest(Boolean bool) {
 		if(bool) {
 			for(String rule : AntiSpamFilterControl.ruleList) {
