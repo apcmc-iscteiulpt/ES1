@@ -39,7 +39,6 @@ public class AntiSpamFilterProblem extends AbstractDoubleProblem {
 
 	  public void evaluate(DoubleSolution solution){
 		// Neste Método adicionar metodo que avalia a qualidade das pesos definidos
-	    double aux, xi, xj;
 	    double[] fx = new double[getNumberOfObjectives()];
 	    double[] x = new double[getNumberOfVariables()];
 	    ArrayList<Double> list = new ArrayList<Double>();

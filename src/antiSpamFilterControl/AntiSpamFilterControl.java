@@ -31,16 +31,6 @@ public class AntiSpamFilterControl {
 	public static DoubleSolution manualResults;
 	public static DoubleSolution autoResults;
 
-	/**
-	 * Constructor of AntiSpamFiltrorControl
-	 */
-	public AntiSpamFilterControl() {
-		falsePositiveManual = 0;
-		falseNegativeManual = 0;
-		falsePositiveAuto = 0;
-		falseNegativeAuto = 0;
-	}
-	
 	
 	/**
 	 * Procedure that treats "Rules.cf" file and fills the HashMap "hmRulesOrder", the rules list "ruleList" and the weight lists "wList" and "autoWList"
@@ -93,8 +83,12 @@ public class AntiSpamFilterControl {
 	 * @return weight value
 	 */
 	public static double getWeigthByRule(String rule, ArrayList<Double> list) {
-		int i = hmRulesOrder.get(rule);
-		return list.get(i);
+		if(hmRulesOrder.containsKey(rule)) {
+			int i = hmRulesOrder.get(rule);
+			return list.get(i);
+		}
+		return 0.0;
+		
 	}
 	
 	/**
@@ -102,8 +96,10 @@ public class AntiSpamFilterControl {
 	 * @param rule The name of the rule
 	 * @param weight The weight value of the rule
 	 */
-	public static void setWeigthByRule(String rule, double weight) {
-		wList.set(hmRulesOrder.get(rule), weight);
+	public static void setWeigthByRuleManual(String rule, double weight) {
+		if(hmRulesOrder.containsKey(rule)) {
+				wList.set(hmRulesOrder.get(rule), weight);
+		}
 	}
 	
 	/**
@@ -113,9 +109,9 @@ public class AntiSpamFilterControl {
 	 */
 	public static void saveRulesFile(boolean isManual) throws IOException {
 		if(isManual)
-			saveRulesFile(wList);
+			saveRulesFile(wList, isManual);
 		else	
-			saveRulesFile(autoWList);
+			saveRulesFile(autoWList, isManual);
 	}
 	
 	/**
@@ -123,8 +119,13 @@ public class AntiSpamFilterControl {
 	 * @param weigthList The weight list that is going to be saved
 	 * @throws IOException
 	 */
-	public static void saveRulesFile(ArrayList<Double> weigthList) throws IOException {
-		FileWriter rulesFile = new FileWriter(rules, false);
+	public static void saveRulesFile(ArrayList<Double> weigthList, boolean isManual) throws IOException {
+		FileWriter rulesFile;
+		if(isManual)
+			rulesFile = new FileWriter(rules, false);
+		else
+			rulesFile = new FileWriter(new File("AntiSpamConfigurationForProfessionalMailbox/rules.cf"), false);
+		
 		PrintWriter saveRules = new PrintWriter(rulesFile);
 		for (int i = 0; i < ruleList.size(); i++) {
 			saveRules.write(ruleList.get(i) + " " + weigthList.get(i) + "\n");
@@ -132,8 +133,6 @@ public class AntiSpamFilterControl {
 		rulesFile.close();
 		saveRules.close();
 	}
-	
-
 	
 	private static double getWeigthOfRulesArray(String line, ArrayList<Double> weigthList) {
 		Double counter = 0.0;

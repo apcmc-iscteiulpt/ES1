@@ -26,7 +26,6 @@ public class AntiSpamFilterAutomaticConfiguration {
 
   public void run(int length) throws IOException {
     String experimentBaseDirectory = "experimentBaseDirectory";
-    //chamar este Main na geração automática de pesos
     List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
     problemList.add(new ExperimentProblem<>(new AntiSpamFilterProblem(length)));
 
