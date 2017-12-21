@@ -17,15 +17,15 @@ import antiSpamFilter.AntiSpamFilterProblem;
 
 public class AntiSpamFilterControl {
 
-	static File rules = new File("rules.cf");
-	static File ham = new File("ham.log");
-	static File spam = new File("spam.log");
-	static HashMap<String, Integer> hmRulesOrder = new HashMap<String, Integer>();
+	public static File rules = new File("rules.cf");
+	public static File ham = new File("ham.log");
+	public static File spam = new File("spam.log");
+	private static HashMap<String, Integer> hmRulesOrder = new HashMap<String, Integer>();
 	public static ArrayList<String> ruleList = new ArrayList<String>();
-	static ArrayList<Double> wList = new ArrayList<Double>(); //Weigths List
-	static ArrayList<Double> autoWList = new ArrayList<Double>(); //Weigths List
-	static int falsePositiveManual; //emails HAM sinalizados pelo filtro
-	static int falseNegativeManual; //emails SPAM não sinalizados pelo filtro
+	private static ArrayList<Double> wList = new ArrayList<Double>(); //Weigths List
+	private static ArrayList<Double> autoWList = new ArrayList<Double>(); //Weigths List
+	public static int falsePositiveManual; //emails HAM sinalizados pelo filtro
+	public static int falseNegativeManual; //emails SPAM não sinalizados pelo filtro
 	public static int falsePositiveAuto;
 	public static int falseNegativeAuto;
 

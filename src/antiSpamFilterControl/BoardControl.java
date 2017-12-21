@@ -25,31 +25,31 @@ import org.apache.commons.io.FileUtils;
 import antiSpamFilter.AntiSpamFilterAutomaticConfiguration;
 
 public class BoardControl {
-	int frameWidth = 500;
-	int frameWeigth = 800;
-	JFrame frame =  new JFrame("antiSpamFilter");
+	private int frameWidth = 500;
+	private int frameWeigth = 800;
+	private JFrame frame =  new JFrame("antiSpamFilter");
 	private Dimension filesPanelDimension = new Dimension(frameWidth, frameWeigth/3);
 	private Dimension PanelsDimension = new Dimension(frameWidth, frameWeigth/3);
 	private Dimension inputsDimension = new Dimension(150, 15);
 	
-	JTextField rulesFile_Input;
-	JTextField hamFile_Input;
-	JTextField spamFile_Input;
-	JButton getFilesButton = new JButton("Get Files");
+	public JTextField rulesFile_Input;
+	public JTextField hamFile_Input;
+	public JTextField spamFile_Input;
+	public JButton getFilesButton = new JButton("Get Files");
 	
-	JComboBox<String> manualCBRules = new JComboBox<String>();
-	DefaultComboBoxModel<String> rulesCB;
-	JTextField manualRuleValue;
-	JButton manualTestButton;
-	JButton manualSaveValuesButton;
-	JTextArea manualResults;
+	private JComboBox<String> manualCBRules = new JComboBox<String>();
+	private DefaultComboBoxModel<String> rulesCB;
+	private JTextField manualRuleValue;
+	public JButton manualTestButton;
+	public JButton manualSaveValuesButton;
+	private JTextArea manualResults;
 	
-	JComboBox<String> autoCBRules = new JComboBox<String>();
-	DefaultComboBoxModel<String> autoRulesCB;
-	JTextField autoRuleValue;
-	JButton autoTestButton = new JButton("Test Values");
-	JButton autoSaveValuesButton = new JButton("Save configurations");
-	JTextArea autoResults =  new JTextArea();
+	private JComboBox<String> autoCBRules = new JComboBox<String>();
+	private DefaultComboBoxModel<String> autoRulesCB;
+	private JTextField autoRuleValue;
+	public JButton autoTestButton = new JButton("Test Values");
+	public JButton autoSaveValuesButton = new JButton("Save configurations");
+	private JTextArea autoResults =  new JTextArea();
 	
 	JList<String> SpamToolsListAuto;
 	
@@ -412,6 +412,8 @@ public class BoardControl {
 			case "auto": 
 				autoResults.setText("FP :" + AntiSpamFilterControl.falsePositiveAuto + 
 								   " FN:" +  AntiSpamFilterControl.falseNegativeAuto);
+				break;
+			default:
 				break;
 		}
 	}

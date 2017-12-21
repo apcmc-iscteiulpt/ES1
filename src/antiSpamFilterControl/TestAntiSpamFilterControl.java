@@ -14,6 +14,9 @@ class TestAntiSpamFilterControl {
 	BoardControl b = new BoardControl();;
 	
 	@Test
+	/**
+	 * test the GetFiles action
+	 */
 	void testGetFiles() {
 		b.start();
 		 b.rulesFile_Input.setText("jUnitTests/rules.cf");
@@ -27,6 +30,9 @@ class TestAntiSpamFilterControl {
 	
 	
 	@Test
+	/**
+	 * test the manual configuration
+	 */
 	void testManualConfiguration() {
 		b.manualTestButton.doClick();
 		assertEquals(0, AntiSpamFilterControl.falsePositiveManual);
@@ -34,6 +40,9 @@ class TestAntiSpamFilterControl {
 	}
 	
 	@Test
+	/**
+	 * test the set of weight to rules
+	 */
 	void testSetRulesWeight() {
 		AntiSpamFilterControl.setWeigthByRuleManual("BAYES_00", 4.5);
 		assertEquals(4.5, AntiSpamFilterControl.getWeigthByRule("BAYES_00", true));
@@ -41,18 +50,24 @@ class TestAntiSpamFilterControl {
 	}
 	
 	@Test
+	/**
+	 * test the save of manual file
+	 */
 	void saveManualFile() {
 		b.manualSaveValuesButton.doClick();
 		try {
 			assertEquals(
 				    FileUtils.readFileToString(new File("jUnitTests/rulesConfirm.cf"), "utf-8"), 
-				    FileUtils.readFileToString(new File("rules.cf"), "utf-8"));
+				    FileUtils.readFileToString(new File("AntiSpamConfigurationForProfessionalMailbox/rules.cf"), "utf-8"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Test
+	/**
+	 * test the auto configuration
+	 */
 	void testAutoConfig() {
 		AntiSpamFilterControl.falsePositiveAuto = -1;
 		AntiSpamFilterControl.falseNegativeAuto = -1;
@@ -63,6 +78,9 @@ class TestAntiSpamFilterControl {
 	}
 	
 	@Test
+	/**
+	 * test the save of autoconfiguration file
+	 */
 	void saveAutoFile() {
 		b.autoSaveValuesButton.doClick();
 		try {
