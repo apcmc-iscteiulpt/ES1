@@ -245,6 +245,16 @@ public class AntiSpamFilterControl {
 			}
 	    }
 	}
+	
+	public static void generateFiles(){
+		try {
+			Process p = Runtime.getRuntime().exec("/usr/local/bin/Rscript HV.Boxplot.R", null, new File("experimentBaseDirectory/AntiSpamStudy/R"));
+			Process p2 = Runtime.getRuntime().exec("/Library/TeX/texbin/pdflatex AntiSpamStudy.tex", null, new File("experimentBaseDirectory/AntiSpamStudy/latex"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
 }
 
 

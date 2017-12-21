@@ -348,14 +348,14 @@ public class BoardControl {
 				public void actionPerformed(ActionEvent e){
 					AntiSpamFilterAutomaticConfiguration w  = new AntiSpamFilterAutomaticConfiguration();
 					try {
-						int i = AntiSpamFilterControl.ruleList.size();
 						w.run(AntiSpamFilterControl.ruleList.size());
 						AntiSpamFilterControl.selectAutoConfiguration();
 						setResultString("auto");
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-					System.out.println("Configuração automática terminou!");
+					System.out.println("END Auto Config");
+					AntiSpamFilterControl.generateFiles();
 				}
 			}
 		);
@@ -476,21 +476,11 @@ public class BoardControl {
 	}
 	
 	
-	
 	public static void main(String[] args) {
 		BoardControl board = new BoardControl();
 		board.frame.setVisible(true);
 		board.start();
-//		String[] params = new String [2];
-//	    params[0] = "/Applications/R.app/Contents/MacOS/R";
-//	    params[1] = "experimentBaseDirectory/AntiSpamStudy/R/HV.Boxplot.R";
-////	    params[2] = "C:\\Users\\user\\Desktop\\images2.txt";
-//	    try {
-//			Runtime.getRuntime().exec(params);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
 		
 	}
 	
