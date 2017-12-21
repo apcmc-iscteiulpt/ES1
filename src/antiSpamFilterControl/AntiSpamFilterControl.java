@@ -28,8 +28,6 @@ public class AntiSpamFilterControl {
 	static int falseNegativeManual; //emails SPAM não sinalizados pelo filtro
 	public static int falsePositiveAuto;
 	public static int falseNegativeAuto;
-	public static DoubleSolution manualResults;
-	public static DoubleSolution autoResults;
 
 	
 	/**
@@ -109,9 +107,9 @@ public class AntiSpamFilterControl {
 	 */
 	public static void saveRulesFile(boolean isManual) throws IOException {
 		if(isManual)
-			saveRulesFile(wList, isManual);
+			saveRulesFile(wList);
 		else	
-			saveRulesFile(autoWList, isManual);
+			saveRulesFile(autoWList);
 	}
 	
 	/**
@@ -119,12 +117,9 @@ public class AntiSpamFilterControl {
 	 * @param weigthList The weight list that is going to be saved
 	 * @throws IOException
 	 */
-	public static void saveRulesFile(ArrayList<Double> weigthList, boolean isManual) throws IOException {
+	public static void saveRulesFile(ArrayList<Double> weigthList) throws IOException {
 		FileWriter rulesFile;
-		if(isManual)
-			rulesFile = new FileWriter(rules, false);
-		else
-			rulesFile = new FileWriter(new File("AntiSpamConfigurationForProfessionalMailbox/rules.cf"), false);
+		rulesFile = new FileWriter(new File("AntiSpamConfigurationForProfessionalMailbox/rules.cf"), false);
 		
 		PrintWriter saveRules = new PrintWriter(rulesFile);
 		for (int i = 0; i < ruleList.size(); i++) {

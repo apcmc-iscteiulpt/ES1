@@ -54,6 +54,7 @@ public class BoardControl {
 	JList<String> SpamToolsListAuto;
 	
 	String currRule = "";
+	int currRuleIndex = -1;
 	
 	/**
 	 * Constructor of BoardControl
@@ -281,7 +282,7 @@ public class BoardControl {
 		autoPanel.add(autoConfigLabel, c);
 		
 		//ComboBox Auto
-		c.weightx = 0.7;
+		c.weightx = 0.4;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 1;
@@ -301,7 +302,7 @@ public class BoardControl {
 		autoPanel.add(autoCBRules, c);
 		
 		//WeigthValue
-		c.weightx = 0.3;
+		c.weightx = 0.6;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 1;
@@ -345,7 +346,6 @@ public class BoardControl {
 		autoTestButton.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent e){
-					//Call evaluate Here!!!!
 					AntiSpamFilterAutomaticConfiguration w  = new AntiSpamFilterAutomaticConfiguration();
 					try {
 						int i = AntiSpamFilterControl.ruleList.size();
@@ -421,12 +421,13 @@ public class BoardControl {
 	 * Procedure that sets the weight (defined on TextArea) to corresponding rule
 	 */
 	private void setValueToRule() {
+		
 		if(!currRule.isEmpty()) {
 			AntiSpamFilterControl.setWeigthByRuleManual(currRule, Double.parseDouble(manualRuleValue.getText()));
 		}
+		
 		if(manualCBRules.isValid()) {
-			String[] p = manualCBRules.getSelectedItem().toString().split(" ");
-			currRule = p[0];
+			currRule = manualCBRules.getSelectedItem().toString();
 		}
 		manualRuleValue.setText(AntiSpamFilterControl.getWeigthByRule(currRule, true) + "");
 	}
@@ -456,9 +457,10 @@ public class BoardControl {
 	private void startSpamFilterTest(Boolean bool) {
 		if(bool) {
 			for(String rule : AntiSpamFilterControl.ruleList) {
-				rulesCB.addElement(rule + " " + AntiSpamFilterControl.getWeigthByRule(rule, true));
-				autoRulesCB.addElement(rule + " " + AntiSpamFilterControl.getWeigthByRule(rule, false));
+				rulesCB.addElement(rule);
+				autoRulesCB.addElement(rule);
 			}
+			currRule = manualCBRules.getItemAt(0);
 		}
 		manualCBRules.setEnabled(bool);
 		manualRuleValue.setEnabled(bool);
@@ -467,7 +469,7 @@ public class BoardControl {
 		manualResults.setEnabled(false);
 		
 		autoCBRules.setEnabled(bool);
-		autoRuleValue.setEnabled(bool);
+		autoRuleValue.setEnabled(false);
 		autoTestButton.setEnabled(bool);
 		autoSaveValuesButton.setEnabled(bool);
 		autoResults.setEnabled(false);
@@ -479,6 +481,17 @@ public class BoardControl {
 		BoardControl board = new BoardControl();
 		board.frame.setVisible(true);
 		board.start();
+//		String[] params = new String [2];
+//	    params[0] = "/Applications/R.app/Contents/MacOS/R";
+//	    params[1] = "experimentBaseDirectory/AntiSpamStudy/R/HV.Boxplot.R";
+////	    params[2] = "C:\\Users\\user\\Desktop\\images2.txt";
+//	    try {
+//			Runtime.getRuntime().exec(params);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 	}
 	
 
