@@ -1,9 +1,11 @@
-Identificação da turma (ex: EIC1)
+METI-PL
 
-Identificação do grupo (ex: Grupo 2)
+112
 
-Identificação do número, nome e papel de cada membro do grupo (ex: 12345, José Silva, Scrum Master)
+70088, Ana Silva, Scrum Master
+68777, André Baptista, Quality Assurance
+69311, Tiago Gomes Correia, Developer
 
-Identificação da variante do projeto desenvolvida (ex: AntiSpamConfigurationForProfessionalMailbox)
+AntiSpamConfigurationForProfessionalMailbox
 
-Link para um vídeo no youtube com a demonstração da aplicação final desenvolvida (ex: http://...)
+https://www.youtube.com/watch?v=ayJLdRx8_Ms&feature=youtu.be

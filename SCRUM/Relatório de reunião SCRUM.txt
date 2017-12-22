@@ -1,0 +1,41 @@
+
+Relatórios de reunião
+Sprint 1
+
+Neste Sprint foram implementadas as seguintes tarefas:
+	-	Análise do problema
+	-	GUI (Mockups)
+	-	Definição da arquitetura do software
+	-	Implementação do GUI
+	-	Importação de ficheiros de determinado path
+	-	Implementação da configuração manual do filtro anti-spam
+
+Neste Sprint conseguimos implementar sem problemas todas as tarefas à exceção de uma que foi a definição e implementação da GUI devido ao facto de não estarmos familiarizados com o Swing do java.
+
+O problema foi ultrapassado mas a estimativa de tempo foi largamente ultrapassada.
+
+Sprint 2
+
+Neste Sprint foram implementadas as seguintes tarefas:
+- Implementação da configuração automática do filtro anti-spam
+- Correção da implementação da contabilização dos falsos-positivos e falsos-negativos
+- Criação de testes unitários e verificação de cobertura de testes
+- Compilação de ficheiros .tex e .R
+- Reunião de code inspection e consequente criação de relatório
+- Criação de video demonstrativo do funcionamento do software
+- Preparação de todo o trabalho para submissão na plataforma e-learning
+
+Neste Sprint conseguimos implementar sem problemas todas as tarefas com a exceção da configuração automática devido a problemas com a classe antiSpamFilterAutomaticConfiguration.
+
+Conseguimos ultrapassar este problema com a ajuda do professor Vitor Bastos Fernandes.
+
+Expectativas:
+Esperávamos já ter neste Sprint as seguintes tarefas:
+- Definição de nova mockup mais user friedly
+- Implementação de nova GUI
+
+
+
+
+
+ 
