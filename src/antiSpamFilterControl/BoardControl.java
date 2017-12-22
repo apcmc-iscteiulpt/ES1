@@ -136,21 +136,21 @@ public class BoardControl {
 		FilesPanel.add(buttonPanel);
 		
 		getFilesButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent e){
-						try {
-							copyFiles(BoardControl.getFile(rulesFile_Input.getText()), AntiSpamFilterControl.rules);
-							AntiSpamFilterControl.treatRulesFile();
-							copyFiles(BoardControl.getFile(hamFile_Input.getText()), AntiSpamFilterControl.ham);
-							copyFiles(BoardControl.getFile(spamFile_Input.getText()), AntiSpamFilterControl.spam);
-							startFilesConfig(false);
-							startSpamFilterTest(true);
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
+			new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					try {
+						copyFiles(BoardControl.getFile(rulesFile_Input.getText()), AntiSpamFilterControl.rules);
+						AntiSpamFilterControl.treatRulesFile();
+						copyFiles(BoardControl.getFile(hamFile_Input.getText()), AntiSpamFilterControl.ham);
+						copyFiles(BoardControl.getFile(spamFile_Input.getText()), AntiSpamFilterControl.spam);
+						startFilesConfig(false);
+						startSpamFilterTest(true);
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
 				}
-			);
+			}
+		);
 		
 		frame.add(FilesPanel);
 	}
