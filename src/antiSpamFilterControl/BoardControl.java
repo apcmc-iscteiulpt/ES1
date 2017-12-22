@@ -97,7 +97,7 @@ public class BoardControl {
 		rulesPanel.setLayout(new GridLayout(2, 1, 1, 2));
 		JLabel rulesFileTitle = new JLabel("Rules File");
 		rulesPanel.add(rulesFileTitle);
-		rulesFile_Input = new JTextField("/Users/Tiago/Downloads/ES I Files/rules.cf"); // 		/Users/Tiago/Downloads/rules.cf
+		rulesFile_Input = new JTextField("rules.cf"); 
 		rulesFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		rulesFile_Input.setSize(inputsDimension);
 		rulesPanel.add(rulesFile_Input);
@@ -109,7 +109,7 @@ public class BoardControl {
 		hamPanel.setLayout(new GridLayout(2, 1, 1, 2));
 		JLabel hamFileTitle = new JLabel("Ham File");
 		hamPanel.add(hamFileTitle);
-		hamFile_Input = new JTextField("/Users/Tiago/Downloads/ES I Files/ham.log");
+		hamFile_Input = new JTextField("ham.log");
 		hamFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		hamFile_Input.setSize(inputsDimension);
 		hamPanel.add(hamFile_Input);
@@ -121,7 +121,7 @@ public class BoardControl {
 		spamPanel.setLayout(new GridLayout(2, 1, 1, 2));
 		JLabel spamFileTitle = new JLabel("SPAM File");
 		spamPanel.add(spamFileTitle);
-		spamFile_Input = new JTextField("/Users/Tiago/Downloads/ES I Files/spam.log");
+		spamFile_Input = new JTextField("spam.log");
 		spamFile_Input.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		spamFile_Input.setSize(inputsDimension);
 		spamPanel.add(spamFile_Input);

@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ClassDiagram>
-    <Class name="antiSpamFilterControl.BoardControl" x="441" y="40">
+    <Class name="antiSpamFilterControl.BoardControl" x="375" y="39">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
-            default-accepted="true" static-accepted="false"/>
+            default-accepted="true" static-accepted="true"/>
         <MethodDisplayFilter public-accepted="true"
-            private-accepted="false" protected-accepted="false"
-            default-accepted="false" static-accepted="false"
-            accessors-accepted="false" constructors-accepted="false"/>
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="true"
+            accessors-accepted="true" constructors-accepted="true"/>
+        <Communication destinationClassName="antiSpamFilterControl.AntiSpamFilterControl"/>
+    </Class>
+    <Class name="antiSpamFilterControl.TestAntiSpamFilterControl"
+        x="701" y="171">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="true"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="true"
+            accessors-accepted="true" constructors-accepted="true"/>
+        <Association
+            destinationClassName="antiSpamFilterControl.BoardControl"
+            endpointName="b" kind="Simple"/>
+        <Communication destinationClassName="antiSpamFilterControl.BoardControl"/>
         <Communication destinationClassName="antiSpamFilterControl.AntiSpamFilterControl"/>
     </Class>
     <Class name="antiSpamFilterControl.AntiSpamFilterControl" x="12" y="60">
@@ -15,8 +30,8 @@
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="true"/>
         <MethodDisplayFilter public-accepted="true"
-            private-accepted="true" protected-accepted="false"
-            default-accepted="false" static-accepted="true"
-            accessors-accepted="false" constructors-accepted="false"/>
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="true"
+            accessors-accepted="true" constructors-accepted="true"/>
     </Class>
 </ClassDiagram>
