@@ -119,6 +119,9 @@ public class AntiSpamFilterControl {
 	 */
 	public static void saveRulesFile(ArrayList<Double> weigthList) throws IOException {
 		FileWriter rulesFile;
+		File folder = new File("AntiSpamConfigurationForProfessionalMailbox");
+		if(!folder.exists())
+			folder.mkdir();
 		rulesFile = new FileWriter(new File("AntiSpamConfigurationForProfessionalMailbox/rules.cf"), false);
 		
 		PrintWriter saveRules = new PrintWriter(rulesFile);
